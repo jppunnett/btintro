@@ -7,9 +7,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <bluetooth/bluetooth.h>
+#include <bluetooth/hci.h>
+#include <bluetooth/hci_lib.h>
 
-int main(int argc, char const *argv[])
+int main()
 {
-	printf("Hello Bluetooth!\n");
+	int dev_id = hci_get_route(NULL);
+	if (dev_id < 0) {
+		/* No bluetooth device found. This is no necessarily an error if 
+			bluetooth is turned off on the host system.
+		*/
+		printf("No bluetooth devices found.\n");
+		exit(EXIT_SUCCESS);
+	}
+
+	printf("Found a bluetooth device. Device ID <%d>\n", dev_id);
+
 	exit(EXIT_SUCCESS);
 }
