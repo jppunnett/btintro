@@ -19,20 +19,20 @@ int main()
 		/* No bluetooth device found. This is no necessarily an error if 
 			bluetooth is turned off on the host system.
 		*/
-		printf("No bluetooth devices found.\n");
+		printf("No local bluetooth adaptor found.\n");
 		exit(EXIT_SUCCESS);
 	}
 
-	printf("Found a bluetooth device. Device ID <%d>\n", dev_id);
+	printf("Found a bluetooth adaptor. Device ID <%d>\n", dev_id);
 
 	int sock = hci_open_dev(dev_id);
 	if (sock < 0) {
 		/* Could not open socket to bluetooth device */
-		perror("Could not open socket to bluetooth device");
+		perror("Could not open socket to bluetooth adaptor.");
 		exit(EXIT_FAILURE);
 	}
 
-	printf("Socket <%d> to Device <%d> open successfully.\n", sock, dev_id);
+	printf("Socket <%d> to adaptor <%d> opened successfully.\n", sock, dev_id);
 
 	close(sock);
 
