@@ -42,7 +42,7 @@ int main()
     if (ii) {
         const int LEN = 8;
         const int FLAGS = IREQ_CACHE_FLUSH;
-        const int TIMEOUT = 50;
+        const int TIMEOUT_MS = 50;
 
         /* Use the adaptor to scan for nearby bluetooth devices. */
         int num_rsp = hci_inquiry(dev_id, LEN, MAX_RSP, NULL, &ii, FLAGS);
@@ -59,7 +59,7 @@ int main()
             ba2str(&(ii+i)->bdaddr, addr);
             memset(name, 0, sizeof(name));
             if (hci_read_remote_name(sock, &(ii+i)->bdaddr, sizeof(name), name,
-                 TIMEOUT) < 0) {
+                 TIMEOUT_MS) < 0) {
                 strcpy(name, "[unknown]");
             }
             printf("%s  %s\n", addr, name);
