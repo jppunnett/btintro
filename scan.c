@@ -2,7 +2,7 @@
 	Scan for nearby bluetooth devices.
 
 	Skeleton based on: http://people.csail.mit.edu/albert/bluez-intro/c404.html
-	Compile using: gcc -o scan.out scan.c -lbluetooth
+	Compile using: gcc -Wall -Wextra -o scan.out scan.c -lbluetooth
 */
 #include <stdio.h>
 #include <stdlib.h>
