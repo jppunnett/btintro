@@ -14,16 +14,20 @@
 
 int main()
 {
+	/*	Find a local bluetooth adaptor.
+		Passing NULL to hci_get_route means we don't care which local bluetooth
+		adaptor we get.
+	*/
 	int dev_id = hci_get_route(NULL);
 	if (dev_id < 0) {
 		/* No bluetooth device found. This is no necessarily an error if 
 			bluetooth is turned off on the host system.
 		*/
-		printf("No local bluetooth adaptor found.\n");
+		printf("Could not find a local Bluetooth adaptor.\n");
 		exit(EXIT_SUCCESS);
 	}
 
-	printf("Found a bluetooth adaptor. Device ID <%d>\n", dev_id);
+	printf("Found a bluetooth adaptor. Device ID <%d>.\n", dev_id);
 
 	int sock = hci_open_dev(dev_id);
 	if (sock < 0) {
@@ -32,9 +36,40 @@ int main()
 		exit(EXIT_FAILURE);
 	}
 
-	printf("Socket <%d> to adaptor <%d> opened successfully.\n", sock, dev_id);
+	printf("Opened socket <%d> to adaptor <%d>.\n", sock, dev_id);
+
+	/* Use the adaptor to scan for nearby bluetooth devices. */
+	const int MAX_RSP = 255;
+	inquiry_info *ii = malloc(MAX_RSP * sizeof(inquiry_info));
+	if (ii) {
+		const int LEN = 8;
+		const int FLAGS = IREQ_CACHE_FLUSH;
+		const int TIMEOUT = 0;
+
+		int num_rsp = hci_inquiry(dev_id, LEN, MAX_RSP, NULL, &ii, FLAGS);
+		if (num_rsp < 0) perror("hci_inquiry");
+
+		printf("Found <%d> Bluetooth devices.\n", num_rsp);
+
+		char addr[19] = { 0 };
+		char name[248] = { 0 };
+
+		int i = 0;
+		for (; i < num_rsp; ++i)
+		{
+			ba2str(&(ii+i)->bdaddr, addr);
+			memset(name, 0, sizeof(name));
+			if (hci_read_remote_name(sock, &(ii+i)->bdaddr, sizeof(name), 
+				name, TIMEOUT) < 0) {
+				strcpy(name, "[unknown]");
+			}
+
+			printf("%s  %s\n", addr, name);
+		}
+
+		free(ii);
+	}
 
 	close(sock);
-
 	exit(EXIT_SUCCESS);
 }
