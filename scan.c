@@ -6,6 +6,8 @@
 */
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <sys/socket.h>
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/hci.h>
 #include <bluetooth/hci_lib.h>
@@ -22,6 +24,17 @@ int main()
 	}
 
 	printf("Found a bluetooth device. Device ID <%d>\n", dev_id);
+
+	int sock = hci_open_dev(dev_id);
+	if (sock < 0) {
+		/* Could not open socket to bluetooth device */
+		perror("Could not open socket to bluetooth device");
+		exit(EXIT_FAILURE);
+	}
+
+	printf("Socket <%d> to Device <%d> open successfully.\n", sock, dev_id);
+
+	close(sock);
 
 	exit(EXIT_SUCCESS);
 }
