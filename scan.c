@@ -31,7 +31,6 @@ int main()
 
     int sock = hci_open_dev(dev_id);
     if (sock < 0) {
-        /* Could not open socket to bluetooth device */
         perror("Could not open socket to bluetooth adaptor.");
         exit(EXIT_FAILURE);
     }
@@ -43,7 +42,7 @@ int main()
     if (ii) {
         const int LEN = 8;
         const int FLAGS = IREQ_CACHE_FLUSH;
-        const int TIMEOUT = 0;
+        const int TIMEOUT = 50;
 
         /* Use the adaptor to scan for nearby bluetooth devices. */
         int num_rsp = hci_inquiry(dev_id, LEN, MAX_RSP, NULL, &ii, FLAGS);
@@ -63,10 +62,8 @@ int main()
                  TIMEOUT) < 0) {
                 strcpy(name, "[unknown]");
             }
-
             printf("%s  %s\n", addr, name);
         }
-
         free(ii);
     }
 
